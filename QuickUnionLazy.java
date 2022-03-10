@@ -1,45 +1,47 @@
 import java.util.Arrays;
 public class QuickUnionLazy {
-    int[] root;
+    int[] parent;
     
     public static void main(String[] args) {
         QuickUnionLazy quickUnion = new QuickUnionLazy(10);
-        quickUnion.union(4, 3);
+        
+        assert(Arrays.equals(quickUnion.parent, new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}));
+        quickUnion.union(4, 3);        
+        assert(Arrays.equals(quickUnion.parent, new int[] {0, 1, 2, 3, 3, 5, 6, 7, 8, 9}));
         quickUnion.union(3, 8);
+        assert(Arrays.equals(quickUnion.parent, new int[] {0, 1, 2, 8, 3, 5, 6, 7, 8, 9}));
         quickUnion.union(6, 5);
+        assert(Arrays.equals(quickUnion.parent, new int[] {0, 1, 2, 8, 3, 5, 5, 7, 8, 9}));
         quickUnion.union(9, 4);
+        assert(Arrays.equals(quickUnion.parent, new int[] {0, 1, 2, 8, 3, 5, 5, 7, 8, 8}));
         quickUnion.union(2, 1);
-        System.out.println(quickUnion.connected(8,9));
-        System.out.println(quickUnion.connected(5,4));
-        quickUnion.union(5, 0);
-        quickUnion.union(7, 2);
-        quickUnion.union(6, 1);
-        quickUnion.union(7, 3);
-        System.out.println(Arrays.toString(quickUnion.root));
+        assert(Arrays.equals(quickUnion.parent, new int[] {0, 1, 1, 8, 3, 5, 5, 7, 8, 8}));
+        assert(quickUnion.connected(8, 9));
+        assert(!quickUnion.connected(5, 4));
     }
 
     public QuickUnionLazy(int max) {
-        root = new int[max];
-        for (int i = 0; i < root.length; i++) {
-            root[i] = i;
+        parent = new int[max];
+        for (int i = 0; i < parent.length; i++) {
+            parent[i] = i;
         }
+    }
+
+    public void union(int p, int q) {
+        parent[rootOf(p)] = rootOf(q);
     }
 
     public int rootOf(int p) {
         int i = p;
-        while (root[i] != i) {
-            i = root[i];
+        while (parent[i] != i) {
+            i = parent[i];
         }
         return i;
     }
 
     public boolean connected(int p, int q) {
-        return root[p] == rootOf(q);
+        return parent[p] == rootOf(q);
     }
 
-    public void union(int p, int q) {
-        int i = rootOf(q);
-        int j = rootOf(q);
-        root[i] = j;
-    }
+    
 }
