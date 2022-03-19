@@ -6,7 +6,7 @@ public class Deque<Item> implements Iterable<Item> {
     private Node<Item> tail;
     private int size;
     private class Node<NodeItem> {
-        private NodeItem value;
+        private final NodeItem value;
         private Node<NodeItem> next;
         private Node<NodeItem> prev;
         public Node(final NodeItem value) {
@@ -38,10 +38,11 @@ public class Deque<Item> implements Iterable<Item> {
         node.next = head;
         if (head != null) {
             head.prev = node;
+            head = node;            
         } else {
             head = node;
-            tail = head;
-        }
+            tail = node;
+        }        
         size++;
     }
 
@@ -91,57 +92,44 @@ public class Deque<Item> implements Iterable<Item> {
 
     // return an iterator over items in order from front to back
     public Iterator<Item> iterator() {
-        return new Iterator<Item>() {
-            private Node<Item> currentNode;
-
-            @Override
-            public boolean hasNext() {
-                if (currentNode == null) {
-                    return head != null;
-                }
-
-                return currentNode.next != null;
-            }
-
-            @Override
-            public Item next() {
-                if (!hasNext()) { throw new NoSuchElementException(); }
-                if (currentNode == null) {
-                    currentNode = head;
-                } else {
-                    currentNode = currentNode.next;
-                }
-                return currentNode.value;
-            }
-            
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        };
+        return new QueueIterator<>(head);
     }
 
+    private class QueueIterator<Item> implements Iterator<Item> {
+        private final Node<Item> head;
+        private Node<Item> currentNode;
+        public QueueIterator(Node<Item> head) {
+            this.head = head;
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (currentNode == null) {
+                return head != null;
+            }
+
+            return currentNode.next != null;
+        }
+
+        @Override
+        public Item next() {
+            if (!hasNext()) { throw new NoSuchElementException(); }
+            if (currentNode == null) {
+                currentNode = head;
+            } else {
+                currentNode = currentNode.next;
+            }
+            return currentNode.value;
+        }
+        
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+    }
     // unit testing (required)
     public static void main(String[] args) {
-        final Deque<Integer> deque = new Deque<>();
-        assert deque.isEmpty();
-
-        deque.addFirst(100);
-        deque.addLast(200);
-
-        assert deque.size == 2;
-
-        final Iterator<Integer> it = deque.iterator();
-        assert it.hasNext();
-
-        assert it.next() == 100;
-        assert it.next() == 200;
-
-        assert !it.hasNext();
-
-        assert deque.removeFirst() == 100;
-        assert deque.removeLast() == 200;
-        assert deque.isEmpty();
+        
     }
 
 }

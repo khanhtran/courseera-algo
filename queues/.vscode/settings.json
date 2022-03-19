@@ -1,0 +1,6 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "/Users/ktran/projects/courseera-algo/algs4.jar"
+    ]
+}
